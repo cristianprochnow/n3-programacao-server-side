@@ -1,29 +1,21 @@
-const Sequelize = require ('sequelize');
-const database = require ('./db');
+import Sequelize from 'sequelize';
+import connection from '../config/db/connection.js';
 
-//Tutor (id, cpf, nome, e-mail)
-const Tutor = database.define('tutor',
-{
-    id:
-    {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
-    },
-    cpf:
-    {
-        type: Sequelize.VARCHAR(50),
-        allowNull: false,
-    },
-    nome:
-    {
-        type: Sequelize.STRING,
-        allowNull: false,
-    },
-    email:
-    {
-        type: Sequelize.STRING,
-        allowNull: false,
-    }
+const Tutor = connection.define('Tutor', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  cpf: {
+    type: Sequelize.VARCHAR(14)
+  },
+  nome: {
+    type: Sequelize.STRING(50)
+  },
+  email: {
+    type: Sequelize.STRING(50)
+  }
 });
+
+export default Tutor;
