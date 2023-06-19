@@ -1,15 +1,14 @@
 import app from './app.js';
+import { SERVER_PORT } from './config/const.js';
+import db from './config/db/db.js';
 
-async () => {
-    const database = require ('./db');
-    
-    try 
-    {
-        const result = await database.sync();
-        console.log(result);
-    }
-    catch (error)
-    {
-        console.log(error);
-    }
-}
+(async () => {
+  try {
+    await db.connection.sync();
+    app.listen(SERVER_PORT);
+
+    console.log(`[app] > servidor rodando na porta ${SERVER_PORT}...`);
+  } catch (error) {
+    console.error(error);
+  }
+})();
