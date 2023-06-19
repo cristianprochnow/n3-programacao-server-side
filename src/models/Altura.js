@@ -1,38 +1,22 @@
 import Sequelize from 'sequelize';
 import connection from '../config/db/connection.js';
 
-// Altura (id, descricao, alturaMin, alturaMax, porte);
-
-const Altura = connection.define('altura',
-{
-    id:
-    {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
+const Altura = connection.define('Altura',
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
     },
-    descricao:
-    {
-        type: Sequelize.STRING,
-        allowNull:false
+    descricao: {
+      type: Sequelize.STRING(100)
     },
-    alturaMin:
-    {
-        type: Sequelize.DECIMAL,
-        allowNull: false
+    alturaMin: {
+      type: Sequelize.DECIMAL(6, 2)
     },
-    alturaMax:
-    {
-        type: Sequelize.DECIMAL,
-        allowNull: false
-    },
+    alturaMax: {
+      type: Sequelize.DECIMAL(6, 2)
+    }
+  });
 
-
-
-
-
-
-
-
-});
+export default Altura;
