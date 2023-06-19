@@ -1,4 +1,12 @@
-# n3-programacao-server-side
+# API com JWT
 🔑 Aplicação backend usando conceitos de API junto com autenticação JWT.
+
+# Models
+
+1. Tutor (id, cpf, nome, e-mail);
+2. Pet (id, nome, genero, altura, tutor);
+3. Altura (id, descricao, alturaMin, alturaMax, porte);
+4. Porte (id, descricao);
+5. Genero (id, descricao);
 
 > Desenvolver uma aplicação servidora em que o tutor (cpf, nome e e-mail) possa responder pela tutoria de um ou mais pet: codigo_pet, nome_pet e genero_pet. Se a altura do pet for menor ou igual a 15 cm a aplicação deve associar da tabela altura_pet a altura pequeno. Se a altura for maior do que 15 cm e menor do que 45 cm associar altura média, caso contrário associar altura alta. Essa aplicação tem que atender as requisições CRUD oriundas de qualquer cliente-server por meio de uma API Rest. Como também permitir consultas de pet por tutor e altura. A tecnologia para a implementação da aplicação é de livre escolha pela dupla. Além disso, inserir a utilização de token (JWT) em um dos end-points da API ou se preferir implemente uma funcionalidade de login (usuário e senha) com token
