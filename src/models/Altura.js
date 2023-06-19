@@ -24,8 +24,10 @@ const Altura = connection.define('altura',
     },
     alturaMax:
     {
-        type: S
-    }
+        type: Sequelize.DECIMAL,
+        allowNull: false
+    },
+
 
 
 
