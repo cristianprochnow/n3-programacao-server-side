@@ -10,8 +10,24 @@ const Altura = connection.define('altura',
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
-        primaryKey:
+        primaryKey: true
+    },
+    descricao:
+    {
+        type: Sequelize.STRING,
+        allowNull:false
+    },
+    alturaMin:
+    {
+        type: Sequelize.DECIMAL,
+        allowNull: false
+    },
+    alturaMax:
+    {
+        type: S
     }
+
+
 
 
 
