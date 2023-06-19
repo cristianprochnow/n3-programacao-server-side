@@ -6,4 +6,6 @@ const db = {};
 db.Sequelize = Sequelize;
 db.connection = connection;
 
+
+
 export default db;
