@@ -7,7 +7,7 @@ const Genero = connection.define('Genero', {
     primaryKey: true,
     autoIncrement: true
   },
-  descricao: Sequelize.VARCHAR(100)
+  descricao: Sequelize.STRING(100)
 });
 
 export default Genero;

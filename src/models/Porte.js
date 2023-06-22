@@ -7,7 +7,7 @@ const Porte = connection.define('Porte', {
     primaryKey: true,
     autoIncrement: true
   },
-  nome: Sequelize.VARCHAR(50)
+  nome: Sequelize.STRING(50)
 });
 
 export default Porte;

@@ -8,7 +8,7 @@ const Tutor = connection.define('Tutor', {
     primaryKey: true
   },
   cpf: {
-    type: Sequelize.VARCHAR(14)
+    type: Sequelize.STRING(14)
   },
   nome: {
     type: Sequelize.STRING(50)
