@@ -10,7 +10,7 @@ const Usuario = connection.define('Usuario', {
   apelido: Sequelize.STRING(50),
   email: Sequelize.STRING(50),
   nome: Sequelize.STRING(100),
-  password: Sequelize.STRING(48);
+  password: Sequelize.STRING(100)
 });
 
 export default Usuario;
