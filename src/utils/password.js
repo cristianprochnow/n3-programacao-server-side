@@ -1,22 +1,31 @@
 import Base64 from '../lib/base64.js';
+import Bcrypt from '../lib/bcrypt.js';
 
 class Password {
-  constructor(password) {
-    this.password = password;
+  constructor() {
     this.Base64 = new Base64();
+    this.Bcrypt = new Bcrypt();
   }
 
-  toPasswordFormat() {
-    return this.Base64.encode(this.password);
+  toPasswordFormat(plainValue) {
+    return this.Base64.encode(plainValue);
   }
 
-  fromPasswordFormat() {
-    return this.Base64.decode(this.password);
+  fromPasswordFormat(formatValue) {
+    return this.Base64.decode(formatValue);
   }
 
-  hashPassword() {}
+  async toHash(plainValue) {
+    const hashValue = await this.Bcrypt.hash(plainValue);
 
-  isValidPassword() {}
+    return hashValue;
+  }
+
+  async isValid(plainValue, encryptValue) {
+    const isValidPass = await this.Bcrypt.isValid(plainValue, encryptValue);
+
+    return isValidPass;
+  }
 }
 
 export default Password;
