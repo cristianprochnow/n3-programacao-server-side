@@ -9,8 +9,6 @@ import { path } from './utils/route.js';
 
 const routes = Router();
 
-console.log(path('/alturas'));
-
 routes
   .use(path('tutores'), TutorRouter)
   .use(path('pets'), PetRouter)
