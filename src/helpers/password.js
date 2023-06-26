@@ -15,6 +15,10 @@ class Password {
     return this.Base64.decode(formatValue);
   }
 
+  isValidEncoding(valueToCompare) {
+    return this.Base64.isValidFormat(valueToCompare);
+  }
+
   async toHash(plainValue) {
     const hashValue = await this.Bcrypt.hash(plainValue);
 

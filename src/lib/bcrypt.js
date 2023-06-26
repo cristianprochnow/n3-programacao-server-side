@@ -27,7 +27,7 @@ class Bcrypt {
     return isValid;
   }
 
-  async clean(value) {
+  clean(value) {
     return String(value).trim();
   }
 }
