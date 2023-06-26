@@ -1,11 +1,16 @@
 import { Op } from 'sequelize';
 import db from '../config/db/db.js';
+import { DEFAULT_HEIGHTS } from '../config/const.js';
 
 class AlturaController {
   constructor() {
     this.altura = db.altura;
   }
 
+  /**
+   * @param {import('express').Request} request
+   * @param {import('express').Response} response
+   */
   async list(request, response) {
     let content = { success: false };
 
@@ -28,28 +33,45 @@ class AlturaController {
     }
   }
 
+  /**
+   * @param {import('express').Request} request
+   * @param {import('express').Response} response
+   */
   show(request, response) {
     return response.send({
       success: true
     });
   }
 
+  /**
+   * @param {import('express').Request} request
+   * @param {import('express').Response} response
+   */
   async create(request, response) {
     let content = { success: false };
 
     try {
       const { body } = request;
 
-      const description = body.descricao;
+      let description = body.descricao;
       const minHeight = parseFloat(body.altura_min);
       const maxHeight = parseFloat(body.altura_max);
 
-      if (!description) throw 'Tag [descricao] é obrigatória.';
       if (minHeight === NaN) throw 'Tag [altura_min] possui formato inválido.';
       if (maxHeight === NaN) throw 'Tag [altura_max] possui formato inválido.';
 
       const alturaComIntervaloJaExistente = await this.verifyHeightInterval(minHeight, maxHeight);
       if (alturaComIntervaloJaExistente) throw 'Altura com valores de [altura_min] e [altura_max] já cadastrados no banco de dados. Tente cadastrar valores maiores ou menores que esse intervalo.';
+
+      if (!description) {
+        if (maxHeight <= 15 && minHeight <= 15) {
+          description = DEFAULT_HEIGHTS.short;
+        } else if (minHeight > 15 && maxHeight <= 45) {
+          description = DEFAULT_HEIGHTS.medium;
+        } else {
+          description = DEFAULT_HEIGHTS.tall;
+        }
+      }
 
       const altura = await this.altura.create({
         descricao: description,
@@ -73,16 +95,106 @@ class AlturaController {
     }
   }
 
-  update(request, response) {
-    return response.send({
-      success: true
-    });
+  /**
+   * @param {import('express').Request} request
+   * @param {import('express').Response} response
+   */
+  async update(request, response) {
+    let content = { success: false };
+
+    try {
+      const { body, params } = request;
+      const { id } = params;
+
+      const description = body.descricao;
+      const minHeight = parseFloat(body.altura_min);
+      const maxHeight = parseFloat(body.altura_max);
+
+      if (!id) throw '[id] de filtro não enviado nos parâmetros da rota.';
+      if (!description) throw 'Tag [descricao] é obrigatória.';
+      if (minHeight === NaN) throw 'Tag [altura_min] possui formato inválido.';
+      if (maxHeight === NaN) throw 'Tag [altura_max] possui formato inválido.';
+
+      const alturaCadastrada = await this.altura.findByPk(id);
+      if (!alturaCadastrada) throw `Não existe um registro de Altura com código [${id}].`;
+
+      const alturaComIntervaloJaExistente = await this.verifyHeightInterval(minHeight, maxHeight);
+      if (
+        alturaComIntervaloJaExistente
+        && alturaComIntervaloJaExistente.id != id
+      ) throw 'Altura com valores de [altura_min] e [altura_max] já cadastrados no banco de dados. Tente cadastrar valores maiores ou menores que esse intervalo.';
+
+      alturaCadastrada.descricao = description;
+      alturaCadastrada.alturaMin = minHeight;
+      alturaCadastrada.alturaMax = maxHeight;
+
+      const altura = await alturaCadastrada.save();
+
+      content = {
+        success: true,
+        result: altura
+      };
+    } catch (error) {
+      console.error(error);
+
+      content = {
+        success: false,
+        error
+      };
+    } finally {
+      return response.send(content);
+    }
   }
 
-  delete(request, response) {
-    return response.send({
-      success: true
-    });
+  /**
+   * @param {import('express').Request} request
+   * @param {import('express').Response} response
+   */
+  async delete(request, response) {
+    let content = { success: false };
+
+    try {
+      const { body, params } = request;
+      const { id } = params;
+
+      const description = body.descricao;
+      const minHeight = parseFloat(body.altura_min);
+      const maxHeight = parseFloat(body.altura_max);
+
+      if (!id) throw '[id] de filtro não enviado nos parâmetros da rota.';
+      if (!description) throw 'Tag [descricao] é obrigatória.';
+      if (minHeight === NaN) throw 'Tag [altura_min] possui formato inválido.';
+      if (maxHeight === NaN) throw 'Tag [altura_max] possui formato inválido.';
+
+      const alturaCadastrada = await this.altura.findByPk(id);
+      if (!alturaCadastrada) throw `Não existe um registro de Altura com código [${id}].`;
+
+      const alturaComIntervaloJaExistente = await this.verifyHeightInterval(minHeight, maxHeight);
+      if (
+        alturaComIntervaloJaExistente
+        && alturaComIntervaloJaExistente.id != id
+      ) throw 'Altura com valores de [altura_min] e [altura_max] já cadastrados no banco de dados. Tente cadastrar valores maiores ou menores que esse intervalo.';
+
+      alturaCadastrada.descricao = description;
+      alturaCadastrada.alturaMin = minHeight;
+      alturaCadastrada.alturaMax = maxHeight;
+
+      const altura = await alturaCadastrada.save();
+
+      content = {
+        success: true,
+        result: altura
+      };
+    } catch (error) {
+      console.error(error);
+
+      content = {
+        success: false,
+        error
+      };
+    } finally {
+      return response.send(content);
+    }
   }
 
   async verifyHeightInterval(min, max) {
