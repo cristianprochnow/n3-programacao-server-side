@@ -7,7 +7,7 @@ const Altura = connection.define('Altura', {
     autoIncrement: true,
     primaryKey: true
   },
-  descricao: {
+  porte: {
     type: Sequelize.STRING(100)
   },
   alturaMin: {

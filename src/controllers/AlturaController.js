@@ -37,10 +37,32 @@ class AlturaController {
    * @param {import('express').Request} request
    * @param {import('express').Response} response
    */
-  show(request, response) {
-    return response.send({
-      success: true
-    });
+  async show(request, response) {
+    let content = { success: false };
+
+    try {
+      const { params } = request;
+      const { id } = params;
+
+      if (!id) throw '[id] de filtro não enviado nos parâmetros da rota.';
+
+      const alturaCadastrada = await this.altura.findByPk(id);
+      if (!alturaCadastrada) throw `Não existe um registro de Altura com código [${id}].`;
+
+      content = {
+        success: true,
+        result: alturaCadastrada
+      };
+    } catch (error) {
+      console.error(error);
+
+      content = {
+        success: false,
+        error
+      };
+    } finally {
+      return response.send(content);
+    }
   }
 
   /**
@@ -74,7 +96,7 @@ class AlturaController {
       }
 
       const altura = await this.altura.create({
-        descricao: description,
+        porte: description,
         alturaMin: minHeight,
         alturaMax: maxHeight
       });
@@ -106,12 +128,11 @@ class AlturaController {
       const { body, params } = request;
       const { id } = params;
 
-      const description = body.descricao;
+      let description = body.descricao;
       const minHeight = parseFloat(body.altura_min);
       const maxHeight = parseFloat(body.altura_max);
 
       if (!id) throw '[id] de filtro não enviado nos parâmetros da rota.';
-      if (!description) throw 'Tag [descricao] é obrigatória.';
       if (minHeight === NaN) throw 'Tag [altura_min] possui formato inválido.';
       if (maxHeight === NaN) throw 'Tag [altura_max] possui formato inválido.';
 
@@ -124,7 +145,17 @@ class AlturaController {
         && alturaComIntervaloJaExistente.id != id
       ) throw 'Altura com valores de [altura_min] e [altura_max] já cadastrados no banco de dados. Tente cadastrar valores maiores ou menores que esse intervalo.';
 
-      alturaCadastrada.descricao = description;
+      if (!description) {
+        if (maxHeight <= 15 && minHeight <= 15) {
+          description = DEFAULT_HEIGHTS.short;
+        } else if (minHeight > 15 && maxHeight <= 45) {
+          description = DEFAULT_HEIGHTS.medium;
+        } else {
+          description = DEFAULT_HEIGHTS.tall;
+        }
+      }
+
+      alturaCadastrada.porte = description;
       alturaCadastrada.alturaMin = minHeight;
       alturaCadastrada.alturaMax = maxHeight;
 
@@ -154,37 +185,17 @@ class AlturaController {
     let content = { success: false };
 
     try {
-      const { body, params } = request;
+      const { params } = request;
       const { id } = params;
 
-      const description = body.descricao;
-      const minHeight = parseFloat(body.altura_min);
-      const maxHeight = parseFloat(body.altura_max);
-
       if (!id) throw '[id] de filtro não enviado nos parâmetros da rota.';
-      if (!description) throw 'Tag [descricao] é obrigatória.';
-      if (minHeight === NaN) throw 'Tag [altura_min] possui formato inválido.';
-      if (maxHeight === NaN) throw 'Tag [altura_max] possui formato inválido.';
 
       const alturaCadastrada = await this.altura.findByPk(id);
       if (!alturaCadastrada) throw `Não existe um registro de Altura com código [${id}].`;
 
-      const alturaComIntervaloJaExistente = await this.verifyHeightInterval(minHeight, maxHeight);
-      if (
-        alturaComIntervaloJaExistente
-        && alturaComIntervaloJaExistente.id != id
-      ) throw 'Altura com valores de [altura_min] e [altura_max] já cadastrados no banco de dados. Tente cadastrar valores maiores ou menores que esse intervalo.';
+      await alturaCadastrada.destroy();
 
-      alturaCadastrada.descricao = description;
-      alturaCadastrada.alturaMin = minHeight;
-      alturaCadastrada.alturaMax = maxHeight;
-
-      const altura = await alturaCadastrada.save();
-
-      content = {
-        success: true,
-        result: altura
-      };
+      content = { success: true };
     } catch (error) {
       console.error(error);
 
