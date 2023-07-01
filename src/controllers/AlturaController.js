@@ -86,13 +86,7 @@ class AlturaController {
       if (alturaComIntervaloJaExistente) throw 'Altura com valores de [altura_min] e [altura_max] já cadastrados no banco de dados. Tente cadastrar valores maiores ou menores que esse intervalo.';
 
       if (!description) {
-        if (maxHeight <= 15 && minHeight <= 15) {
-          description = DEFAULT_HEIGHTS.short;
-        } else if (minHeight > 15 && maxHeight <= 45) {
-          description = DEFAULT_HEIGHTS.medium;
-        } else {
-          description = DEFAULT_HEIGHTS.tall;
-        }
+        description = this.defineHeightDescription(minHeight, maxHeight);
       }
 
       const altura = await this.altura.create({
@@ -136,7 +130,7 @@ class AlturaController {
       if (minHeight === NaN) throw 'Tag [altura_min] possui formato inválido.';
       if (maxHeight === NaN) throw 'Tag [altura_max] possui formato inválido.';
 
-      const alturaCadastrada = await this.altura.findByPk(id);
+      const alturaCadastrada = await this.select(id);
       if (!alturaCadastrada) throw `Não existe um registro de Altura com código [${id}].`;
 
       const alturaComIntervaloJaExistente = await this.verifyHeightInterval(minHeight, maxHeight);
@@ -146,13 +140,7 @@ class AlturaController {
       ) throw 'Altura com valores de [altura_min] e [altura_max] já cadastrados no banco de dados. Tente cadastrar valores maiores ou menores que esse intervalo.';
 
       if (!description) {
-        if (maxHeight <= 15 && minHeight <= 15) {
-          description = DEFAULT_HEIGHTS.short;
-        } else if (minHeight > 15 && maxHeight <= 45) {
-          description = DEFAULT_HEIGHTS.medium;
-        } else {
-          description = DEFAULT_HEIGHTS.tall;
-        }
+        description = this.defineHeightDescription(minHeight, maxHeight);
       }
 
       alturaCadastrada.porte = description;
@@ -190,7 +178,7 @@ class AlturaController {
 
       if (!id) throw '[id] de filtro não enviado nos parâmetros da rota.';
 
-      const alturaCadastrada = await this.altura.findByPk(id);
+      const alturaCadastrada = await this.select(id);
       if (!alturaCadastrada) throw `Não existe um registro de Altura com código [${id}].`;
 
       await alturaCadastrada.destroy();
@@ -209,7 +197,7 @@ class AlturaController {
   }
 
   async verifyHeightInterval(min, max) {
-    const altura = await this.altura.findOne({
+    return await this.altura.findOne({
       where: {
         [Op.and]: [
           { alturaMin: { [Op.lte]: max } },
@@ -217,8 +205,24 @@ class AlturaController {
         ]
       }
     });
+  }
 
-    return altura;
+  defineHeightDescription(min, max) {
+    let description = '';
+
+    if (max <= 15 && min <= 15) {
+      description = DEFAULT_HEIGHTS.short;
+    } else if (min > 15 && max <= 45) {
+      description = DEFAULT_HEIGHTS.medium;
+    } else {
+      description = DEFAULT_HEIGHTS.tall;
+    }
+
+    return description;
+  }
+
+  async select(id) {
+    return await this.altura.findByPk(id)
   }
 }
 

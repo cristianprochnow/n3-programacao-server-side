@@ -128,7 +128,7 @@ class TutorController {
 
       if (!id) throw '[id] de filtro não enviado nos parâmetros da rota.';
 
-      const tutorCadastrado = await this.tutor.findByPk(id);
+      const tutorCadastrado = await this.select(id);
       if (!tutorCadastrado) throw `Não existe um registro de Tutor com código [${id}].`;
 
       tutorCadastrado.cpf = document;
@@ -166,7 +166,7 @@ class TutorController {
 
       if (!id) throw '[id] de filtro não enviado nos parâmetros da rota.';
 
-      const tutorCadastrado = await this.tutor.findByPk(id);
+      const tutorCadastrado = await this.select(id);
       if (!tutorCadastrado) throw `Não existe um registro de Tutor com código [${id}].`;
 
       await tutorCadastrado.destroy();
@@ -182,6 +182,10 @@ class TutorController {
     } finally {
       return response.send(content);
     }
+  }
+
+  async select(id) {
+    return await this.tutor.findByPk(id);
   }
 }
 

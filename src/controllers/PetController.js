@@ -1,8 +1,14 @@
 import db from '../config/db/db.js';
+import AlturaController from './AlturaController.js';
+import GeneroController from './GeneroController.js';
+import TutorController from './TutorController.js';
 
 class PetController {
   constructor() {
     this.pet = db.pet;
+    this.alturaController = new AlturaController();
+    this.tutorController = new TutorController();
+    this.generoController = new GeneroController()
   }
 
   /**
@@ -13,7 +19,18 @@ class PetController {
     let content = { success: false };
 
     try {
-      const pet = await this.pet.findAll();
+      const { tutor_id, altura_id } = request.query;
+
+      const where = {};
+
+      if (tutor_id) {
+        where.tutor = tutor_id;
+      }
+      if (altura_id) {
+        where.altura = altura_id;
+      }
+
+      const pet = await this.pet.findAll({ where });
 
       content = {
         success: true,
@@ -77,6 +94,19 @@ class PetController {
       let gender = body.genero;
       let height = body.altura;
       let guardian = body.tutor;
+
+      if (!name) throw 'Campo [nome] é obrigatório.';
+      if (!gender) throw 'Campo [genero] é obrigatório.';
+      if (!height) throw 'Campo [altura] é obrigatório.';
+      if (!guardian) throw 'Campo [tutor] é obrigatório.';
+
+      const generoEncontrado = await this.generoController.select(gender);
+      const alturaEncontrado = await this.alturaController.select(height);
+      const tutorEncontrado = await this.tutorController.select(guardian);
+
+      if (!generoEncontrado) throw `Não foi encontrado Gênero com o código [${gender}].`;
+      if (!alturaEncontrado) throw `Não foi encontrado Altura com o código [${height}].`;
+      if (!tutorEncontrado) throw `Não foi encontrado Tutor com o código [${guardian}].`;
 
       const pet = await this.pet.create({
         nome: name,

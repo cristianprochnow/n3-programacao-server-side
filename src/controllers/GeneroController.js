@@ -162,6 +162,10 @@ class GeneroController {
       return response.send(content);
     }
   }
+
+  async select(id) {
+    return await this.genero.findByPk(id);
+  }
 }
 
 export default GeneroController;
