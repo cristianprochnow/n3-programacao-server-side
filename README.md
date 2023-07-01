@@ -1,6 +1,11 @@
 # API com JWT
 🔑 Aplicação backend usando conceitos de API junto com autenticação JWT.
 
+# Equipe
+
+1. Cristian Prochnow
+2. Lucas Willian de Souza Serpa
+
 # Rodar o projeto
 ```bash
 npm install
