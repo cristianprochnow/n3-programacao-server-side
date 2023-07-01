@@ -26,7 +26,7 @@ class UsersMiddleware {
     } catch (error) {
       content = {
         success: false,
-        error
+        error: 'Token de acesso inválido ou expirado. Faça login novamente para continuar.'
       };
 
       return response
