@@ -94,6 +94,12 @@ class PetController {
       let gender = body.genero;
       let height = body.altura;
       let guardian = body.tutor;
+      let tamanho = body.tamanho;
+
+      const alturaExistente = await this.alturaController.verifyHeightInterval(tamanho, tamanho);
+      if (alturaExistente) {
+        height = alturaExistente.id;
+      }
 
       if (!name) throw 'Campo [nome] é obrigatório.';
       if (!gender) throw 'Campo [genero] é obrigatório.';
